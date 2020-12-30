@@ -1,0 +1,20 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0")
+    title NaMoPaiMo
+    link(href="./css/style.css", rel="stylesheet")
+  body
+    .w-full.bg-grey-600.h-screen.flex.flex-col.justify-center
+      .w-34.mx-auto.bg-white.shadow-md.rounded.p-8.mb-4
+        img(src="./img/logo.jpg")
+        .flex.flex-row.content-center
+          a.px-8(href="/") Register
+          a.px-8(href="/complete") Complete
+          a.px-8(href="/stats") Live Stats 
+        form
+          .mb-4
+            label(for='username').block.text-grey-darkest.font-bold.mb-2 Username
+            input(type='text', placeholder='Username').shadow.border.rounded.w-full.p-2.text-xs.text-grey-darker

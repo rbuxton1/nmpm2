@@ -1,0 +1,54 @@
+version: '3.1'
+services:
+
+  nmpm:
+    image: nmpm
+    restart: unless-stopped
+    container_name: nmpm
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - ${PORT}:3000
+    volumes:
+      - ./uploads:/usr/src/app/public/uploads
+    environment:
+      DB: nmpm-db
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      VIRTUAL_HOST: ${VH}
+      LETSENCRYPT_HOST: ${VH}
+      LETSENCRYPT_HOST: ${VH}
+      LETSENCRYPT_EMAIL: ${EMAIL}
+      MAILGUN_KEY: ${MAILGUN_KEY}
+
+  nmpm-db:
+    image: mysql
+    restart: unless-stopped
+    container_name: nmpm-db
+    volumes:
+      - ./sql-scripts:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_DATABASE: nmpm
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}
+    command: --default-authentication-plugin=mysql_native_password
+
+  nmpm-pma:
+    image: phpmyadmin/phpmyadmin
+    container_name: nmpm-pma
+    links:
+      - nmpm-db
+    environment:
+      PMA_HOST: nmpm-db
+      PMA_PORT: 3306
+      VIRTUAL_HOST: ${VH_PMA}
+      LETSENCRYPT_HOST: ${VH_PMA}
+    ports:
+      - ${PMA_PORT}:80
+# Only for production!
+#networks:
+#  default:
+#    external:
+#      name: webproxy

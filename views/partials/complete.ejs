@@ -1,0 +1,27 @@
+<h1 class="text-4xl font-bold text-center">
+  Completion
+</h1>
+<form action="/register/complete" method="post" encType="multipart/form-data">
+  <div class="flex flex-col">
+    <% if(code){ %>
+      <p>Looks like you registered on this computer, and your code might be: <b><%-code%></b>. Please double check this!</p>
+    <% } %>
+
+    <div class="my-4 lg:flex lg:flex-row">
+      <label class="lg:w-1/4 mx-4 font-bold" for="code">Completion Key</label>
+      <input class="lg:w-3/4 mx-4 border-b-2" type="text" name="code" placeholder="abcde12345" maxlength="10" required>
+    </div>
+
+    <div class="my-4">
+      This year we are processing the completed images differently. Instead of providing a Imgur link, we are accepting them via this form. <b>Once you submit there is no going back</b>, please make sure that your image is the correct one and that you are happy with it. This will speed up our collage makeing process, and make the live stats much more interesting.
+    </div>
+
+    <div class="my-4 lg:flex lg:flex-row">
+      <label class="lg:w-1/4 mx-4 font-bold" class="lg:w-1/4 mx-4 font-bold" for="name">Image</label>
+      <input class="lg:w-3/4 mx-4 border-b-2" type="file" name="img" accept="image/png, image/jpeg" required>
+    </div>
+
+    <input type="submit" class="inline-flex justify-center h-8 px-4 m-2 text-sm text-indigo-100 transition-colors duration-150 bg-green-600 rounded-lg focus:shadow-outline hover:bg-green-800" value="Submit" name="submit">
+
+  </div>
+</form>
