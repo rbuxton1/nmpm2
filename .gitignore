@@ -118,3 +118,5 @@ dist
 # Custom
 uploads/post/*
 uploads/pre/*
+!uploads/post/.gitkeep
+!uploads/pre/.gitkeep
