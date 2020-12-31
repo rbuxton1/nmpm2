@@ -153,6 +153,10 @@ app.get("/stats", (req, res) => {
   });
 });
 
+app.get("/about", (req, res) => {
+	res.render("frame", {content: "partials/about.ejs"});
+});
+
 const server = app.listen(3000, () => {
   console.log(`The application started on port ${server.address().port}`);
 });
