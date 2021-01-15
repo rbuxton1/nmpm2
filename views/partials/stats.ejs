@@ -1,4 +1,4 @@
-<div class="flex flex-col">
+<div class="flex flex-col justify-center">
   <h1 class="text-4xl font-bold text-center">
     Stats
   </h1>
@@ -17,4 +17,25 @@
     <p class="lg:w-1/4 mx-4 font-bold">Unique Countries</p>
     <p class="lg:w-3/4 mx-4 text-center justify-center"> <%= stats.uniqueCountries %></p>
   </div>
+
+  <h1 class="text-4xl font-bold text-center">
+    Recent Beginning Selfies
+  </h1>
+
+  <% images.forEach(image => { %>
+    <div class="my-4">
+      <img class="w-1/2 h-auto justify-center mx-auto" src="<%- image.pre_img.replace("./public", "") %>" alt="">
+      <p class="text-center"><%- image.name %></p>
+    </div>
+  <% }); %>
+
+  <div class="my-4 flex flex-row">
+    <% if(page > 0) { %>
+      <a href="/stats?page=<%- page - 1 %>" class="w-1/2 underline text-left">Newer</a>
+    <% } %>
+    <% if(images.length > 0) { %>
+      <a href="/stats?page=<%- page + 1 %>" class="w-1/2 underline text-right">Older</a>
+    <% } %>
+  </div>
+
 </div>

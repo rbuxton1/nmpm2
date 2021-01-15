@@ -30,7 +30,8 @@ var db = mysql.createPool({
 });
 var insertNew = "INSERT INTO `registrar`(`id`, `name`, `email`, `address1`, `address2`, `city`, `state`, `zip`, `country`, `level`, `age`, `description`, `medium`, `color`, `goals`, `fee`, `years`, `pre_img`, `code`, `reg_date`) VALUES (NULL,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)";
 var instertComplete = "INSERT INTO `completed`(`id`, `code`, `post_img`, `finish`) VALUES (NULL,?,?,CURRENT_TIMESTAMP)";
-var statsQuery = "SELECT (SELECT COUNT(*) FROM completed JOIN registrar on completed.code = registrar.code) as completedCount, (SELECT COUNT(*) FROM registrar) as registeredCount, (SELECT COUNT(DISTINCT registrar.country) FROM registrar) as uniqueCountries"
+var statsQuery = "SELECT (SELECT COUNT(*) FROM completed JOIN registrar on completed.code = registrar.code) as completedCount, (SELECT COUNT(*) FROM registrar) as registeredCount, (SELECT COUNT(DISTINCT registrar.country) FROM registrar) as uniqueCountries";
+var imagesQuery = "SELECT registrar.pre_img, registrar.name FROM registrar WHERE NOT registrar.pre_img = 'NA' ORDER BY reg_date DESC LIMIT 25 OFFSET ?";
 
 
 function codeGen(callback){
@@ -147,9 +148,13 @@ app.get("/upload/done", (req, res) => {
 });
 
 app.get("/stats", (req, res) => {
-  db.query(statsQuery, (err, sql) => {
-    if(err) res.render("frame", {content: "partials/error", error: err});
-    else res.render("frame", {content: "partials/stats.ejs", stats: sql[0]});
+	var page = (parseInt(req.query.page) || 0);
+  db.query(statsQuery, (err, statsSql) => {
+		db.query(imagesQuery, [page * 25], (err2, imagesSql) => {
+			if(err) res.render("frame", {content: "partials/error", error: err});
+			else if(err2) res.render("frame", {content: "partials/error", error: err2});
+			else res.render("frame", {content: "partials/stats.ejs", stats: statsSql[0], images: imagesSql, page: page});
+		});
   });
 });
 
