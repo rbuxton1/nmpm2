@@ -30,7 +30,7 @@ var db = mysql.createPool({
 });
 var insertNew = "INSERT INTO `registrar`(`id`, `name`, `email`, `address1`, `address2`, `city`, `state`, `zip`, `country`, `level`, `age`, `description`, `medium`, `color`, `goals`, `fee`, `years`, `pre_img`, `code`, `reg_date`) VALUES (NULL,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)";
 var instertComplete = "INSERT INTO `completed`(`id`, `code`, `post_img`, `finish`) VALUES (NULL,?,?,CURRENT_TIMESTAMP)";
-var statsQuery = "SELECT (SELECT COUNT(*) FROM completed JOIN registrar on completed.code = registrar.code) as completedCount, (SELECT COUNT(*) FROM registrar) as registeredCount, (SELECT COUNT(DISTINCT registrar.country) FROM registrar) as uniqueCountries";
+var statsQuery = "SELECT (SELECT COUNT(DISTINCT registrar.name) FROM completed JOIN registrar on completed.code = registrar.code) as completedCount, (SELECT COUNT(DISTINCT registrar.name) FROM registrar) as registeredCount, (SELECT COUNT(DISTINCT registrar.country) FROM registrar) as uniqueCountries";
 var imagesQuery = "SELECT registrar.pre_img, registrar.name FROM registrar WHERE NOT registrar.pre_img = 'NA' ORDER BY reg_date DESC LIMIT 25 OFFSET ?";
 
 
