@@ -7,6 +7,8 @@ const cookieParser = require("cookie-parser");
 const mailgun = require("mailgun-js");
 const mg = mailgun({apiKey: process.env.MAILGUN_KEY, domain: "mg.namopaimo.com"});
 
+var state = "registration";
+
 const emailTemplate = {
 	from: 'registrar@namopaimo.com',
 	to: '',
