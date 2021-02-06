@@ -7,7 +7,7 @@ const cookieParser = require("cookie-parser");
 const mailgun = require("mailgun-js");
 const mg = mailgun({apiKey: process.env.MAILGUN_KEY, domain: "mg.namopaimo.com"});
 
-var state = "registration";
+var state = "register";
 
 const emailTemplate = {
 	from: 'registrar@namopaimo.com',
@@ -33,7 +33,8 @@ var db = mysql.createPool({
 var insertNew = "INSERT INTO `registrar`(`id`, `name`, `email`, `address1`, `address2`, `city`, `state`, `zip`, `country`, `level`, `age`, `description`, `medium`, `color`, `goals`, `fee`, `years`, `pre_img`, `code`, `reg_date`) VALUES (NULL,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)";
 var instertComplete = "INSERT INTO `completed`(`id`, `code`, `post_img`, `finish`) VALUES (NULL,?,?,CURRENT_TIMESTAMP)";
 var statsQuery = "SELECT (SELECT COUNT(DISTINCT registrar.name) FROM completed JOIN registrar on completed.code = registrar.code) as completedCount, (SELECT COUNT(DISTINCT registrar.name) FROM registrar) as registeredCount, (SELECT COUNT(DISTINCT registrar.country) FROM registrar) as uniqueCountries";
-var imagesQuery = "SELECT registrar.pre_img, registrar.name FROM registrar WHERE NOT registrar.pre_img = 'NA' ORDER BY reg_date DESC LIMIT 25 OFFSET ?";
+var preImagesQuery = "SELECT registrar.pre_img, registrar.name FROM registrar WHERE NOT registrar.pre_img = 'NA' ORDER BY reg_date DESC LIMIT 25 OFFSET ?";
+var postImagesQuery = "SELECT registrar.pre_img, registrar.name, completed.post_img FROM registrar JOIN completed ON registrar.code = completed.code ORDER BY reg_date DESC LIMIT 25 OFFSET ?";
 
 
 function codeGen(callback){
@@ -58,7 +59,12 @@ function codeGen(callback){
 }
 
 app.get("/", (req, res) => {
-  res.render("frame", {content: "partials/register.ejs"})
+  res.render("frame", {content: state == "register" ? "partials/register.ejs" : "partials/timeline.ejs"});
+});
+
+app.post("/changestate", (req, res) => {
+	state = req.body.state;
+	res.send(state);
 });
 
 app.post("/register/new", (req, res) => {
@@ -117,7 +123,7 @@ app.get("/register/done", (req, res) => {
 });
 
 app.get("/complete", (req, res) => {
-  res.render("frame", {content: "partials/complete.ejs", code: req.cookies.code});
+  res.render("frame", {content: state == "complete" ? "partials/complete.ejs" : "partials/timeline.ejs", code: req.cookies.code});
 });
 
 app.post("/register/complete", (req, res) => {
@@ -152,10 +158,10 @@ app.get("/upload/done", (req, res) => {
 app.get("/stats", (req, res) => {
 	var page = (parseInt(req.query.page) || 0);
   db.query(statsQuery, (err, statsSql) => {
-		db.query(imagesQuery, [page * 25], (err2, imagesSql) => {
+		db.query(state== "register" ? preImagesQuery : postImagesQuery, [page * 25], (err2, imagesSql) => {
 			if(err) res.render("frame", {content: "partials/error", error: err});
 			else if(err2) res.render("frame", {content: "partials/error", error: err2});
-			else res.render("frame", {content: "partials/stats.ejs", stats: statsSql[0], images: imagesSql, page: page});
+			else res.render("frame", {content: "partials/stats.ejs", stats: statsSql[0], images: imagesSql, page: page, state: state});
 		});
   });
 });
