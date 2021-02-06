@@ -4,7 +4,9 @@ docker-compose stop
 echo "DONE!"
 echo "- - - - - - - - - - - - - - - - - -"
 echo "Updating from git . . ."
+git stash
 git pull
+git stash pop
 echo "DONE!"
 echo "- - - - - - - - - - - - - - - - - -"
 echo "Starting detached, forcing a new build. . ."
