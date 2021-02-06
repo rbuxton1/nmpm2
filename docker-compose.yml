@@ -21,6 +21,7 @@ services:
       LETSENCRYPT_HOST: ${VH}
       LETSENCRYPT_EMAIL: ${EMAIL}
       MAILGUN_KEY: ${MAILGUN_KEY}
+      STATE_PASS: ${STATE_PASS}
 
   nmpm-db:
     image: mysql

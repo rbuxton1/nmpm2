@@ -63,8 +63,12 @@ app.get("/", (req, res) => {
 });
 
 app.post("/changestate", (req, res) => {
-	state = req.body.state;
-	res.send(state);
+	if(req.body.pass == process.env.STATE_PASS){
+		state = req.body.state;
+		res.send(state);
+	} else {
+		res.send("invalid auths");
+	}
 });
 
 app.post("/register/new", (req, res) => {
