@@ -7,7 +7,7 @@ const cookieParser = require("cookie-parser");
 const mailgun = require("mailgun-js");
 const mg = mailgun({apiKey: process.env.MAILGUN_KEY, domain: "mg.namopaimo.com"});
 
-var state = "register";
+var state = "complete";
 
 const emailTemplate = {
 	from: 'registrar@namopaimo.com',
@@ -33,8 +33,9 @@ var db = mysql.createPool({
 var insertNew = "INSERT INTO `registrar`(`id`, `name`, `email`, `address1`, `address2`, `city`, `state`, `zip`, `country`, `level`, `age`, `description`, `medium`, `color`, `goals`, `fee`, `years`, `pre_img`, `code`, `reg_date`) VALUES (NULL,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)";
 var instertComplete = "INSERT INTO `completed`(`id`, `code`, `post_img`, `finish`) VALUES (NULL,?,?,CURRENT_TIMESTAMP)";
 var statsQuery = "SELECT (SELECT COUNT(DISTINCT registrar.name) FROM completed JOIN registrar on completed.code = registrar.code) as completedCount, (SELECT COUNT(DISTINCT registrar.name) FROM registrar) as registeredCount, (SELECT COUNT(DISTINCT registrar.country) FROM registrar) as uniqueCountries";
+//WHERE completed.finish >= DATE("2021-02-01") GROUP BY name
 var preImagesQuery = "SELECT registrar.pre_img, registrar.name FROM registrar WHERE NOT registrar.pre_img = 'NA' ORDER BY reg_date DESC LIMIT 25 OFFSET ?";
-var postImagesQuery = "SELECT registrar.pre_img, registrar.name, completed.post_img FROM registrar JOIN completed ON registrar.code = completed.code ORDER BY reg_date DESC LIMIT 25 OFFSET ?";
+var postImagesQuery = "SELECT registrar.pre_img, registrar.name, completed.post_img FROM registrar JOIN completed ON registrar.code = completed.code ORDER BY finish DESC LIMIT 25 OFFSET ?";
 
 
 function codeGen(callback){
